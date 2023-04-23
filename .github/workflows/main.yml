@@ -1,29 +1,18 @@
-on: 
- push:
-  branches: 
-   - main
-
+name: CI -> Deploy to My website
+on:
+  push:
+    branches: [ master]
 jobs:
-  steps: 
-   name: FTP Deployment
-   uses: airvzxf/ftp-deployment-action@latest
-   with:
-    #FTP Server.
-     server: ftps://waws-prod-ln1-119.ftp.azurewebsites.windows.net/site/wwwroot
-     # FTP User.
-     user: tanya-app-wp\$tanya-app-wp
-     # FTP Password.
-     password: 0cKSqGWx0f6GhJnHAcGC1tAwzA21WrGfB4kBApb2L1CxazWMqNW0dhyFMiyM
-     # Local directory.
-     local_dir: ./src
-     # Remote directory.
-     remote_dir: ./
-     # Delete all the files inside of the remote directory.
-     delete: true
-     # Times that the lftp will be executed if an error occurred.
-     
-     # FTP - Allow SSL encryption.
-     ftp_ssl_allow: true
-     # FTP - FEAT: Determining what extended features the FTP server supports.
-     
-     
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Here is the deployment action
+      - name: Upload from src via FTP
+        uses: airvzxf/ftp-deployment-action@latest
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          user: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local_dir: "./src"
+          delete: "true"
